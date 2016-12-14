@@ -6,15 +6,15 @@
 
 #IncludeRegexTransform: 
 
-/home/julia/Documents/test_libpointmatcher/icp/icp_complete.cpp
+/home/julia/Desktop/libpointmatcher/icp/icp_complete_evaluation.cpp
 pointmatcher/PointMatcher.h
-/home/julia/Documents/test_libpointmatcher/icp/pointmatcher/PointMatcher.h
+/home/julia/Desktop/libpointmatcher/icp/pointmatcher/PointMatcher.h
 cassert
 -
 iostream
 -
 boost/filesystem.hpp
-/home/julia/Documents/test_libpointmatcher/icp/boost/filesystem.hpp
+/home/julia/Desktop/libpointmatcher/icp/boost/filesystem.hpp
 fstream
 -
 algorithm

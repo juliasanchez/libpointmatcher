@@ -1,5 +1,5 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/test_icp.dir/icp_complete.cpp.o"
+  "CMakeFiles/test_icp.dir/icp_complete_evaluation.cpp.o"
   "test_icp.pdb"
   "test_icp"
 )

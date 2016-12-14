@@ -43,10 +43,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/julia/Documents/test_libpointmatcher/icp
+CMAKE_SOURCE_DIR = /home/julia/Desktop/libpointmatcher/icp
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/julia/Documents/test_libpointmatcher/icp/build
+CMAKE_BINARY_DIR = /home/julia/Desktop/libpointmatcher/icp/build
 
 # Include any dependencies generated for this target.
 include CMakeFiles/test_icp.dir/depend.make
@@ -57,38 +57,38 @@ include CMakeFiles/test_icp.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/test_icp.dir/flags.make
 
-CMakeFiles/test_icp.dir/icp_complete.cpp.o: CMakeFiles/test_icp.dir/flags.make
-CMakeFiles/test_icp.dir/icp_complete.cpp.o: ../icp_complete.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/julia/Documents/test_libpointmatcher/icp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/test_icp.dir/icp_complete.cpp.o"
-	/usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/test_icp.dir/icp_complete.cpp.o -c /home/julia/Documents/test_libpointmatcher/icp/icp_complete.cpp
+CMakeFiles/test_icp.dir/icp_complete_evaluation.cpp.o: CMakeFiles/test_icp.dir/flags.make
+CMakeFiles/test_icp.dir/icp_complete_evaluation.cpp.o: ../icp_complete_evaluation.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/julia/Desktop/libpointmatcher/icp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/test_icp.dir/icp_complete_evaluation.cpp.o"
+	/usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/test_icp.dir/icp_complete_evaluation.cpp.o -c /home/julia/Desktop/libpointmatcher/icp/icp_complete_evaluation.cpp
 
-CMakeFiles/test_icp.dir/icp_complete.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/test_icp.dir/icp_complete.cpp.i"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/julia/Documents/test_libpointmatcher/icp/icp_complete.cpp > CMakeFiles/test_icp.dir/icp_complete.cpp.i
+CMakeFiles/test_icp.dir/icp_complete_evaluation.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/test_icp.dir/icp_complete_evaluation.cpp.i"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/julia/Desktop/libpointmatcher/icp/icp_complete_evaluation.cpp > CMakeFiles/test_icp.dir/icp_complete_evaluation.cpp.i
 
-CMakeFiles/test_icp.dir/icp_complete.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/test_icp.dir/icp_complete.cpp.s"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/julia/Documents/test_libpointmatcher/icp/icp_complete.cpp -o CMakeFiles/test_icp.dir/icp_complete.cpp.s
+CMakeFiles/test_icp.dir/icp_complete_evaluation.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/test_icp.dir/icp_complete_evaluation.cpp.s"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/julia/Desktop/libpointmatcher/icp/icp_complete_evaluation.cpp -o CMakeFiles/test_icp.dir/icp_complete_evaluation.cpp.s
 
-CMakeFiles/test_icp.dir/icp_complete.cpp.o.requires:
+CMakeFiles/test_icp.dir/icp_complete_evaluation.cpp.o.requires:
 
-.PHONY : CMakeFiles/test_icp.dir/icp_complete.cpp.o.requires
+.PHONY : CMakeFiles/test_icp.dir/icp_complete_evaluation.cpp.o.requires
 
-CMakeFiles/test_icp.dir/icp_complete.cpp.o.provides: CMakeFiles/test_icp.dir/icp_complete.cpp.o.requires
-	$(MAKE) -f CMakeFiles/test_icp.dir/build.make CMakeFiles/test_icp.dir/icp_complete.cpp.o.provides.build
-.PHONY : CMakeFiles/test_icp.dir/icp_complete.cpp.o.provides
+CMakeFiles/test_icp.dir/icp_complete_evaluation.cpp.o.provides: CMakeFiles/test_icp.dir/icp_complete_evaluation.cpp.o.requires
+	$(MAKE) -f CMakeFiles/test_icp.dir/build.make CMakeFiles/test_icp.dir/icp_complete_evaluation.cpp.o.provides.build
+.PHONY : CMakeFiles/test_icp.dir/icp_complete_evaluation.cpp.o.provides
 
-CMakeFiles/test_icp.dir/icp_complete.cpp.o.provides.build: CMakeFiles/test_icp.dir/icp_complete.cpp.o
+CMakeFiles/test_icp.dir/icp_complete_evaluation.cpp.o.provides.build: CMakeFiles/test_icp.dir/icp_complete_evaluation.cpp.o
 
 
 # Object files for target test_icp
 test_icp_OBJECTS = \
-"CMakeFiles/test_icp.dir/icp_complete.cpp.o"
+"CMakeFiles/test_icp.dir/icp_complete_evaluation.cpp.o"
 
 # External object files for target test_icp
 test_icp_EXTERNAL_OBJECTS =
 
-test_icp: CMakeFiles/test_icp.dir/icp_complete.cpp.o
+test_icp: CMakeFiles/test_icp.dir/icp_complete_evaluation.cpp.o
 test_icp: CMakeFiles/test_icp.dir/build.make
 test_icp: /usr/local/lib/libpointmatcher.so
 test_icp: /usr/lib/x86_64-linux-gnu/libboost_thread.so
@@ -101,7 +101,7 @@ test_icp: /usr/lib/x86_64-linux-gnu/libboost_atomic.so
 test_icp: /usr/lib/x86_64-linux-gnu/libpthread.so
 test_icp: /usr/local/lib/libnabo.a
 test_icp: CMakeFiles/test_icp.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/julia/Documents/test_libpointmatcher/icp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX executable test_icp"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/julia/Desktop/libpointmatcher/icp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX executable test_icp"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/test_icp.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -109,7 +109,7 @@ CMakeFiles/test_icp.dir/build: test_icp
 
 .PHONY : CMakeFiles/test_icp.dir/build
 
-CMakeFiles/test_icp.dir/requires: CMakeFiles/test_icp.dir/icp_complete.cpp.o.requires
+CMakeFiles/test_icp.dir/requires: CMakeFiles/test_icp.dir/icp_complete_evaluation.cpp.o.requires
 
 .PHONY : CMakeFiles/test_icp.dir/requires
 
@@ -118,6 +118,6 @@ CMakeFiles/test_icp.dir/clean:
 .PHONY : CMakeFiles/test_icp.dir/clean
 
 CMakeFiles/test_icp.dir/depend:
-	cd /home/julia/Documents/test_libpointmatcher/icp/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/julia/Documents/test_libpointmatcher/icp /home/julia/Documents/test_libpointmatcher/icp /home/julia/Documents/test_libpointmatcher/icp/build /home/julia/Documents/test_libpointmatcher/icp/build /home/julia/Documents/test_libpointmatcher/icp/build/CMakeFiles/test_icp.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/julia/Desktop/libpointmatcher/icp/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/julia/Desktop/libpointmatcher/icp /home/julia/Desktop/libpointmatcher/icp /home/julia/Desktop/libpointmatcher/icp/build /home/julia/Desktop/libpointmatcher/icp/build /home/julia/Desktop/libpointmatcher/icp/build/CMakeFiles/test_icp.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/test_icp.dir/depend
 
