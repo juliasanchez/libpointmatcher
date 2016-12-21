@@ -1,0 +1,1 @@
+/usr/bin/c++   -g   CMakeFiles/metascan_registration.dir/metascan_registration.cpp.o  -o metascan_registration -rdynamic /usr/local/lib/libpointmatcher.so -lboost_thread -lboost_filesystem -lboost_system -lboost_program_options -lboost_date_time -lboost_chrono -lboost_atomic -lpthread /usr/local/lib/libnabo.a -lgomp -lrt -Wl,-rpath,/usr/local/lib 

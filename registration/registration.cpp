@@ -12,52 +12,40 @@ typedef PointMatcher<float> PM;
 typedef PM::DataPoints PointCloud;
 typedef PM::Parameters Parameters;
 
-int validateArgs(const int argc, const char *argv[],bool& isTransfoSaved,string& configFile,string& initTranslation, string& initRotation);
-PM::TransformationParameters parseTranslation(string& translation,const int cloudDimension);
-PM::TransformationParameters parseRotation(string& rotation,const int cloudDimension);
+int validateArgs(const int argc, const char *argv[],bool& isTransfoSaved,string& initTranslation, string& initRotation);
+PM::TransformationParameters parseTranslation(string& translation);
+PM::TransformationParameters parseRotation(string& rotation);
 void usage(const char *argv[]);
 
 int main(int argc, const char *argv[])
 {
     bool isTransfoSaved = false;
-    string configFile;
     string initTranslation("0,0,0");
     string initRotation("1,0,0;0,1,0;0,0,1");
-    const int ret = validateArgs(argc, argv, isTransfoSaved, configFile, initTranslation, initRotation);
+    const int ret = validateArgs(argc, argv, isTransfoSaved, initTranslation, initRotation);
 
     const char *src_file(argv[argc-2]);
     const char *tgt_file(argv[argc-1]);
 
     // Load point clouds
-    const PointCloud source(PointCloud::load(src_file));
-    const PointCloud target(PointCloud::load(tgt_file));
+    setLogger(PM::get().LoggerRegistrar.create("FileLogger"));
+    PointCloud source(PointCloud::load(src_file));
+    PointCloud target(PointCloud::load(tgt_file));
 
-    PM::ICP icp;
+//---------------------------------------STEP 1 : FILTERS----------------------------------------------------------------------
 
-    if (configFile.empty())
-    {
-        icp.setDefault();
-    }
-    else
-    {
-        // load YAML config
-        ifstream ifs(configFile.c_str());
-        icp.loadFromYaml(ifs);
-    }
+    ifstream file("configuration/filters_configuration.yaml");
+    PM::DataPointsFilters filter(file);
+    filter.apply(source);
+    filter.apply(target);
 
-    int cloudDimension = target.getEuclideanDim();
+//---------------------------------------STEP 2 : INITIAL TRANSFORMATION-------------------------------------------------------
 
-    if (!(cloudDimension == 3))
-    {
-        cerr << "Invalid input point clouds dimension" << endl;
-        exit(1);
-    }
-
-    //PROBLEME RESOLU: Je passe par un intermédiaire statique
-    PM::TransformationParameters translation1 = parseTranslation(initTranslation, cloudDimension);
-    Eigen::Matrix<float, 4, 4> translation=translation1;
-    PM::TransformationParameters rotation1 = parseRotation(initRotation, cloudDimension);
-    Eigen::Matrix<float, 4, 4> rotation=rotation1;
+//initialisation de la transformation
+    PM::TransformationParameters translation1 = parseTranslation(initTranslation);
+    Eigen::Matrix<float, 4, 4> translation=translation1;//problème avec la multiplication dynamique avec eigen: Je passe par un intermédiaire statique
+    PM::TransformationParameters rotation1 = parseRotation(initRotation);
+    Eigen::Matrix<float, 4, 4> rotation=rotation1;//problème avec la multiplication dynamique avec eigen: Je passe par un intermédiaire statique
     PM::TransformationParameters initTransfo = translation*rotation;
 
     PM::Transformation* rigidTrans;
@@ -71,60 +59,32 @@ int main(int argc, const char *argv[])
 
     const PointCloud initializedSource = rigidTrans->compute(source, initTransfo);
 
+//---------------------------------------STEP 3 : ICP--------------------------------------------------------------------------
+    PM::ICP icp;
+
+    ifstream ifs("configuration/icp_configuration.yaml");
+    icp.loadFromYaml(ifs);
+
+    int cloudDimension = target.getEuclideanDim();
+
     PM::TransformationParameters T = icp(source, target);
-    float matchRatio = icp.errorMinimizer->getWeightedPointUsedRatio();
-    cout << "match ratio: " <<  matchRatio << endl;
 
     PointCloud source_out(source);
     icp.transformations.apply(source_out, T);
 
-    cout << endl << "------------------" << endl;
+    source_out.save("source_out.csv");
 
-    // Computation of Haussdorff distance (ie max distance of all --- /!\ outliers ).
-    //
-    // INPUTS:
-    // target: point cloud used as reference
-    // source_out: aligned point cloud (using the transformation outputted by icp)
-    // icp: icp object used to aligned the point clouds
+////---------------------------------------STEP 4 : EVALUATION---------------------------------------------------------------------
 
-    // Structure to hold future match results
-    PM::Matches matches;
+    cout << endl << "--------EVALUATION----------" << endl;
 
-    Parametrizable::Parameters params;
-    params["knn"] =  toParam(1); // for Hausdorff distance, we only need the first closest point
-    params["epsilon"] =  toParam(0);
-
-    PM::Matcher* matcherHausdorff = PM::get().MatcherRegistrar.create("KDTreeMatcher", params);
-
-    // max. distance from reading to reference
-    matcherHausdorff->init(target);
-    matches = matcherHausdorff->findClosests(source_out);
-    float maxDist1 = matches.getDistsQuantile(1.0);
-    float maxDistRobust1 = matches.getDistsQuantile(0.85);
-
-    // max. distance from reference to reading
-    matcherHausdorff->init(source_out);
-    matches = matcherHausdorff->findClosests(target);
-    float maxDist2 = matches.getDistsQuantile(1.0);
-    float maxDistRobust2 = matches.getDistsQuantile(0.85); //without some outliers
-
-    float haussdorffDist = std::max(maxDist1, maxDist2);
-    float haussdorffQuantileDist = std::max(maxDistRobust1, maxDistRobust2);
-
-    cout << "Haussdorff distance: " << std::sqrt(haussdorffDist) << " m" << endl;
-    cout << "Haussdorff quantile distance: " << std::sqrt(haussdorffQuantileDist) <<  " m" << endl;
-
-    // paired point mean distance without outliers.
-    //
-    // INPUTS:
-    // target: point cloud used as reference
-    // source_out: aligned point cloud (using the transformation outputted by icp)
-    // icp: icp object used to aligned the point clouds
+    // EVALUATION paired point mean distance without outliers.
 
     // initiate the matching with unfiltered point cloud
     icp.matcher->init(target);
 
     // extract closest points
+    PM::Matches matches;
     matches = icp.matcher->findClosests(source_out);
 
     // weight paired points
@@ -139,64 +99,82 @@ int main(int argc, const char *argv[])
     const PM::Matrix matchedRead = matchedPoints.reading.features.topRows(dim); // [x1,x2,x3...;y1,y2,y3...;z1,z2,z3;...]
     const PM::Matrix matchedRef = matchedPoints.reference.features.topRows(dim);
 
+
+
+    ofstream matchesFile1;
+    string file_name1 = "matches1.txt";
+
+    matchesFile1.open(file_name1.c_str());
+    matchesFile1 << matchedRead.transpose() << endl;
+    matchesFile1.close();
+
+    ofstream matchesFile2;
+    string file_name2 = "matches2.txt";
+
+    matchesFile2.open(file_name2.c_str());
+    matchesFile2 << matchedRef.transpose() << endl;
+    matchesFile2.close();
+
+
     // compute mean distance
     const PM::Matrix dist = (matchedRead - matchedRef).colwise().norm(); // compute the norm for each column vector =euclidian distance
     const float meanDist = dist.sum()/nbMatchedPoints;
     cout << "mean distance without outliers: " << meanDist << " m" << endl;
 
-    cout << "------------------" << endl << endl;
+//    cout << "------------------" << endl << endl;
 
-    source_out.save("source_out.vtk");
-    if(isTransfoSaved)
-    {
-        ofstream transfoFile;
-        string initFileName = "init_transfo.txt";
-        string icpFileName = "icp_transfo.txt";
-        string completeFileName = "complete_transfo.txt";
+////---------------------------------------STEP 5 : SAVE RESULTS---------------------------------------------------------------------
 
-        transfoFile.open(initFileName.c_str());
-        if(transfoFile.is_open())
-        {
-            transfoFile << initTransfo << endl;
-            transfoFile.close();
-        }
-        else
-        {
-            cout << "Unable to write the initial transformation file\n" << endl;
-        }
+//    if(isTransfoSaved)
+//    {
+//        ofstream transfoFile;
+//        string initFileName = "init_transfo.txt";
+//        string icpFileName = "icp_transfo.txt";
+//        string completeFileName = "complete_transfo.txt";
 
-        transfoFile.open(icpFileName.c_str());
-        if(transfoFile.is_open())
-        {
-            transfoFile << T << endl;
-            transfoFile.close();
-        }
-        else
-        {
-            cout << "Unable to write the ICP transformation file\n" << endl;
-        }
+//        transfoFile.open(initFileName.c_str());
+//        if(transfoFile.is_open())
+//        {
+//            transfoFile << initTransfo << endl;
+//            transfoFile.close();
+//        }
+//        else
+//        {
+//            cout << "Unable to write the initial transformation file\n" << endl;
+//        }
 
-        transfoFile.open(completeFileName.c_str());
-        if(transfoFile.is_open())
-        {
-            //Conversion from dynamic to static to avoid bug
-            Eigen::Matrix<float, 4, 4> initTransfo1=initTransfo;
-            Eigen::Matrix<float, 4, 4> T1=T;
-            transfoFile << T1*initTransfo1 << endl;
-            transfoFile.close();
-        }
-        else
-        {
-            cout << "Unable to write the complete transformation file\n" << endl;
-        }
-    }
-    else
-    {
-        Eigen::Matrix<float, 4, 4> initTransfo1=initTransfo;
-        Eigen::Matrix<float, 4, 4> T1=T;
-        cout << "ICP transformation:" << endl << T << endl;
-        cout << "Complete transformation:" << endl << T1*initTransfo1 << endl;
-    }
+//        transfoFile.open(icpFileName.c_str());
+//        if(transfoFile.is_open())
+//        {
+//            transfoFile << T << endl;
+//            transfoFile.close();
+//        }
+//        else
+//        {
+//            cout << "Unable to write the ICP transformation file\n" << endl;
+//        }
+
+//        transfoFile.open(completeFileName.c_str());
+//        if(transfoFile.is_open())
+//        {
+//            //Conversion from dynamic to static to avoid bug
+//            Eigen::Matrix<float, 4, 4> initTransfo1=initTransfo;
+//            Eigen::Matrix<float, 4, 4> T1=T;
+//            transfoFile << T1*initTransfo1 << endl;
+//            transfoFile.close();
+//        }
+//        else
+//        {
+//            cout << "Unable to write the complete transformation file\n" << endl;
+//        }
+//    }
+//    else
+//    {
+//        Eigen::Matrix<float, 4, 4> initTransfo1=initTransfo;
+//        Eigen::Matrix<float, 4, 4> T1=T;
+//        cout << "ICP transformation:" << endl << T << endl;
+//        cout << "Complete transformation:" << endl << T1*initTransfo1 << endl;
+//    }
 
     return 0;
 }
@@ -204,7 +182,6 @@ int main(int argc, const char *argv[])
 // Make sure that the command arguments make sense
 int validateArgs(const int argc, const char *argv[],
                  bool& isTransfoSaved,
-                 string& configFile,
                  string& initTranslation, string& initRotation)
 {
     if (argc == 1)
@@ -240,10 +217,6 @@ int validateArgs(const int argc, const char *argv[],
                      << "Default value will be used." << endl;
             }
         }
-        else if (opt == "--config")
-        {
-            configFile = argv[i+1];
-        }
         else if (opt == "--initTranslation")
         {
             initTranslation = argv[i+1];
@@ -262,8 +235,9 @@ int validateArgs(const int argc, const char *argv[],
 
 //---------------------------------------------------------------------------------------------------
 
-PM::TransformationParameters parseTranslation(string& translation, const int cloudDimension)
+PM::TransformationParameters parseTranslation(string& translation)
 {
+    const int cloudDimension=3;
     PM::TransformationParameters parsedTranslation;
     parsedTranslation = PM::TransformationParameters::Identity(
                 cloudDimension+1,cloudDimension+1);
@@ -306,8 +280,9 @@ PM::TransformationParameters parseTranslation(string& translation, const int clo
 //---------------------------------------------------------------------------------------------------
 
 
-PM::TransformationParameters parseRotation(string &rotation,const int cloudDimension)
+PM::TransformationParameters parseRotation(string &rotation)
 {
+    const int cloudDimension=3;
     PM::TransformationParameters parsedRotation;
     parsedRotation = PM::TransformationParameters::Identity(cloudDimension+1,cloudDimension+1);
     rotation.erase(std::remove(rotation.begin(), rotation.end(), '['),rotation.end());
@@ -345,7 +320,6 @@ void usage(const char *argv[])
     cerr << " usage : " << argv[0] << " [OPTIONS] reference.csv reading.csv" << endl;
     cerr << endl;
     cerr << "OPTIONS can be a combination of:" << endl;
-    cerr << "--config YAML_CONFIG_FILE  Load the config from a YAML file (default: default parameters)" << endl;
     cerr << "--initTranslation [x,y,z]  Add an initial 3D translation before applying ICP (default: 0,0,0)" << endl;
     cerr << "--initTranslation [x,y]    Add an initial 2D translation before applying ICP (default: 0,0)" << endl;
     cerr << "--initRotation [r00,r01,r02,r10,r11,r12,r20,r21,r22]" << endl;

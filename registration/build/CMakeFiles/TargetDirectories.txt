@@ -1,0 +1,3 @@
+/home/julia/Desktop/libpointmatcher/registration/build/CMakeFiles/edit_cache.dir
+/home/julia/Desktop/libpointmatcher/registration/build/CMakeFiles/rebuild_cache.dir
+/home/julia/Desktop/libpointmatcher/registration/build/CMakeFiles/registration.dir
