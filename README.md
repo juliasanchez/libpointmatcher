@@ -17,3 +17,12 @@
     -init_transfo.txt
     -icp_transfo.txt
     -complete_transfo.txt
+    
+**Examples of execution for registration**
+
+./registration ../../data_test/Hokuyo_2.csv ../../data_test/Hokuyo_3.csv
+
+**Examples of execution for metascan**
+
+the file name and address is defined in the code : default: "/home/julia/Documents/test_libpointmatcher/data_local_frame/..."
+this doesn't require any argument since it uses all the Huyoko files
