@@ -62,17 +62,38 @@ int main(int argc, const char *argv[])
 //---------------------------------------STEP 3 : ICP--------------------------------------------------------------------------
     PM::ICP icp;
 
-    ifstream ifs("configuration/icp_configuration.yaml");
+    ifstream ifs("configuration/icp_configuration1.yaml");
     icp.loadFromYaml(ifs);
 
-    int cloudDimension = target.getEuclideanDim();
-
     PM::TransformationParameters T = icp(source, target);
-
     PointCloud source_out(source);
     icp.transformations.apply(source_out, T);
 
+    for (int j=0; j<3; j++)
+    {
+
+        T = icp(source_out, target);
+        icp.transformations.apply(source_out, T);
+    }
+
     source_out.save("source_out.csv");
+
+//    fstream ifs1("configuration/icp_configuration.yaml");
+//    icp.loadFromYaml(ifs1);
+
+//    T = icp(source, target);
+//    source_out=source;
+//    icp.transformations.apply(source_out, T);
+
+//    for (int j=0; j<3; j++)
+//    {
+
+//        T = icp(source_out, target);
+//        icp.transformations.apply(source_out, T);
+//    }
+
+//    source_out.save("source_out_with_normals_filter.csv");
+
 
 ////---------------------------------------STEP 4 : EVALUATION---------------------------------------------------------------------
 

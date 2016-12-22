@@ -1,19 +1,21 @@
 #--------------------------------------------------------FILTERS_CONFIGURATION--------------------------------------------------------------#
 
 #-------------------ADD_INFO+SAMPLING--------------------
-- SamplingSurfaceNormalDataPointsFilter:  # divide cloud in boxes containing knn points
-   ratio: 1
-   knn: 20
-   samplingMethod: 0 #0: random 1: bin sub-sampling ==1 point per box
-   keepDensities: 1  #descriptor used in following filters
-   keepNormals: 1
-   averageExistingDescriptors: 0 #0: doesn't average 1 : average descriptor in a box
+#- SamplingSurfaceNormalDataPointsFilter:  # divide cloud in boxes containing knn points
+#   ratio: 1
+#   knn: 20
+#   samplingMethod: 0 #0: random 1: bin sub-sampling ==1 point per box
+#   keepDensities: 1  #descriptor used in following filters
+#   keepNormals: 1
+#   averageExistingDescriptors: 0 #0: doesn't average 1 : average descriptor in a box
 
 #-------------------ADD-INFO--------------------
 
-#- SurfaceNormalDataPointsFilter: #same as filter above but without sampling effect
-#   keepDensities: 1  #descriptor used in following filters
-#   keepNormals: 1
+- SurfaceNormalDataPointsFilter: #same as filter above but without sampling effect
+   knn: 30
+   keepNormals: 1
+   keepDensities: 1
+
 - ObservationDirectionDataPointsFilter  #useful if the sensor is not located at the origin=get coordinates from sensor place
 - OrientNormalsDataPointsFilter # to get all normals pointing toward the same direction
 

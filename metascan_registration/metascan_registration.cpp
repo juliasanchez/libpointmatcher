@@ -35,8 +35,8 @@ int main(int argc, const char *argv[])
     for (int i =2; i<8; i++)
     {
 
-        source.save("source.csv");
-        target.save("target.csv");
+        //source.save("source.csv");
+        //target.save("target.csv");
   //---------------------------------------STEP 1 : FILTERS----------------------------------------------------------------------
 
       ifstream file("configuration/filters_configuration.yaml");
@@ -67,7 +67,7 @@ int main(int argc, const char *argv[])
   //---------------------------------------STEP 3 : ICP--------------------------------------------------------------------------
       PM::ICP icp;
 
-      ifstream ifs("configuration/icp_configuration.yaml");
+      ifstream ifs("configuration/icp_configuration1.yaml");
       icp.loadFromYaml(ifs);
 
       int cloudDimension = target.getEuclideanDim();
@@ -129,7 +129,7 @@ int main(int argc, const char *argv[])
       source=target;
 
       sstm.str("");
-      sstm<<"/home/julia/Documents/test_libpointmatcher/data_local_frame/Hokuyo_";
+      sstm<<"/home/juli a/Documents/test_libpointmatcher/data_local_frame/Hokuyo_";
       sstm <<i+2<<".csv";
       std::string file_address = sstm.str();
       const char *tgt_file(file_address.c_str());
