@@ -1,0 +1,61 @@
+<CustomFilterDefinitions>
+  <CustomProxyDefinition name="display_points2" group="filters">
+    <CompoundSourceProxy id="5300" servers="1">
+      <Proxy group="filters" type="TableToPolyData" id="5122" servers="1" compound_name="TableToPoints2">
+        <Property name="Create2DPoints" id="5122.Create2DPoints" number_of_elements="1">
+          <Element index="0" value="0"/>
+          <Domain name="bool" id="5122.Create2DPoints.bool"/>
+        </Property>
+        <Property name="Input" id="5122.Input" number_of_elements="1">
+          <Domain name="groups" id="5122.Input.groups"/>
+          <Domain name="input_array" id="5122.Input.input_array"/>
+          <Domain name="input_type" id="5122.Input.input_type"/>
+        </Property>
+        <Property name="KeepAllDataArrays" id="5122.KeepAllDataArrays" number_of_elements="1">
+          <Element index="0" value="0"/>
+          <Domain name="bool" id="5122.KeepAllDataArrays.bool"/>
+        </Property>
+        <Property name="XColumn" id="5122.XColumn" number_of_elements="1">
+          <Element index="0" value="x2"/>
+          <Domain name="array_list" id="5122.XColumn.array_list">
+            <String text="x1"/>
+            <String text="x2"/>
+            <String text="y1"/>
+            <String text="y2"/>
+            <String text="z1"/>
+            <String text="z2"/>
+          </Domain>
+        </Property>
+        <Property name="YColumn" id="5122.YColumn" number_of_elements="1">
+          <Element index="0" value="y2"/>
+          <Domain name="array_list" id="5122.YColumn.array_list">
+            <String text="x1"/>
+            <String text="x2"/>
+            <String text="y1"/>
+            <String text="y2"/>
+            <String text="z1"/>
+            <String text="z2"/>
+          </Domain>
+        </Property>
+        <Property name="ZColumn" id="5122.ZColumn" number_of_elements="1">
+          <Element index="0" value="z2"/>
+          <Domain name="array_list" id="5122.ZColumn.array_list">
+            <String text="x1"/>
+            <String text="x2"/>
+            <String text="y1"/>
+            <String text="y2"/>
+            <String text="z1"/>
+            <String text="z2"/>
+          </Domain>
+        </Property>
+      </Proxy>
+      <ExposedProperties>
+        <Property name="Input" proxy_name="TableToPoints2" exposed_name="Input"/>
+      </ExposedProperties>
+      <OutputPort name="Output" proxy="TableToPoints2" port_index="0"/>
+      <Hints>
+        <ShowInMenu/>
+      </Hints>
+    </CompoundSourceProxy>
+  </CustomProxyDefinition>
+</CustomFilterDefinitions>
